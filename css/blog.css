@@ -1,0 +1,245 @@
+/* Blog Sayfası CSS - ASEC Kulübü */
+
+/* Ana Renkler
+- Ana Renk (Lacivert): #1B1F3B
+- Gece Mavisi: #2C3E50
+- Mor: #6A0DAD
+- Koyu Mor: #4B0082
+- Menekşe: #9370DB
+- Sistem Moru: #B39DDB
+- Açık Mor: #E6E6FA
+*/
+
+/* Ana Container */
+.blog-container {
+    max-width: 1200px;
+    margin: 3rem auto 5rem;
+    padding: 0 1.5rem;
+}
+
+/* Sayfa Başlığı */
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1B1F3B;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #6A0DAD, #9370DB);
+    border-radius: 2px;
+}
+
+/* Blog Kartları Grid */
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2.5rem;
+    margin-top: 3rem;
+}
+
+/* Blog Kartı */
+.blog-card {
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.blog-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Blog Resmi */
+.blog-image {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    position: relative;
+}
+
+.blog-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.blog-card:hover .blog-image img {
+    transform: scale(1.1);
+}
+
+/* Kategori Etiketi */
+.category {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: linear-gradient(135deg, #6A0DAD, #9370DB);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 3px 10px rgba(106, 13, 173, 0.3);
+    z-index: 10;
+}
+
+/* Blog İçeriği */
+.blog-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.blog-content h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1B1F3B;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    transition: color 0.3s ease;
+}
+
+.blog-card:hover .blog-content h3 {
+    color: #6A0DAD;
+}
+
+.blog-excerpt {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+/* Blog Meta Bilgileri */
+.blog-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.blog-meta span {
+    display: flex;
+    align-items: center;
+}
+
+.blog-meta i {
+    color: #9370DB;
+    margin-right: 0.5rem;
+}
+
+/* Devamını Oku Butonu */
+.read-more {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.7rem 1.5rem;
+    background-color: #1B1F3B;
+    color: #fff;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+    box-shadow: 0 4px 10px rgba(27, 31, 59, 0.2);
+}
+
+.read-more i {
+    margin-left: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.read-more:hover {
+    background-color: #6A0DAD;
+    box-shadow: 0 6px 15px rgba(106, 13, 173, 0.3);
+}
+
+.read-more:hover i {
+    transform: translateX(5px);
+}
+
+/* Blog Yazısı Yok Durumu */
+.no-posts {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.no-posts i {
+    font-size: 4rem;
+    color: #9370DB;
+    margin-bottom: 1.5rem;
+}
+
+.no-posts h3 {
+    font-size: 1.8rem;
+    color: #1B1F3B;
+    margin-bottom: 1rem;
+}
+
+.no-posts p {
+    font-size: 1.1rem;
+    color: #555;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 992px) {
+    .blog-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .blog-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .blog-content h3 {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .blog-container {
+        margin: 2rem auto 4rem;
+    }
+    
+    .page-title {
+        font-size: 1.8rem;
+    }
+    
+    .blog-image {
+        height: 180px;
+    }
+}

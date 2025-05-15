@@ -1,0 +1,253 @@
+/* Footer CSS - Klasman Tasarım */
+footer {
+  background-color: #1B1F3B; /* Ana Renk - Lacivert */
+  color: #FFFFFF;
+  position: relative;
+  padding: 0;
+}
+
+/* Üst Dalga Efekti */
+footer::before {
+  content: '';
+  position: absolute;
+  top: -70px;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' fill='%231B1F3B' opacity='.25'%3E%3C/path%3E%3Cpath d='M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z' fill='%231B1F3B' opacity='.5'%3E%3C/path%3E%3Cpath d='M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z' fill='%231B1F3B'%3E%3C/path%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.footer-container {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem 2rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 3rem;
+  z-index: 2;
+}
+
+/* Footer Bölüm Başlıkları */
+.footer-section h3 {
+  color: #B39DDB; /* Sistem Moru */
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.footer-section h3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #6A0DAD, #9370DB); /* Mor - Menekşe Gradient */
+  border-radius: 2px;
+}
+
+/* Footer Metinleri */
+.footer-section p {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  color: #E6E6FA; /* Açık Mor */
+  font-size: 0.95rem;
+}
+
+/* Hızlı Bağlantılar */
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.footer-links a {
+  color: #E6E6FA; /* Açık Mor */
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  padding: 0.3rem 0;
+}
+
+.footer-links a i {
+  margin-right: 0.5rem;
+  font-size: 0.8rem;
+  color: #9370DB; /* Menekşe */
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #9370DB; /* Menekşe */
+}
+
+.footer-links a:hover i {
+  transform: translateX(3px);
+  color: #B39DDB; /* Sistem Moru */
+}
+
+/* Sosyal Medya Linkleri */
+.social-links {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.social-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2C3E50, #1B1F3B); /* Gece Mavisi - Lacivert Gradient */
+  color: #FFFFFF;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.social-links a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #6A0DAD, #9370DB); /* Mor - Menekşe Gradient */
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.social-links a:hover {
+  transform: translateY(-5px);
+}
+
+.social-links a:hover::before {
+  opacity: 1;
+}
+
+/* İletişim Bilgileri */
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.contact-item i {
+  color: #9370DB; /* Menekşe */
+  font-size: 1.2rem;
+  margin-top: 0.2rem;
+  width: 20px;
+  text-align: center;
+}
+
+.contact-item div p {
+  margin-bottom: 0.3rem;
+  line-height: 1.6;
+}
+
+/* Telif Hakkı */
+.copyright {
+  position: relative;
+  text-align: center;
+  padding: 1.5rem 0;
+  margin-top: 3rem;
+  color: #B39DDB; /* Sistem Moru */
+  font-size: 0.9rem;
+  z-index: 2;
+}
+
+.copyright::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+/* Responsive Tasarım */
+@media (max-width: 992px) {
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .footer-section:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding: 3rem 1.5rem 1.5rem;
+    text-align: center;
+  }
+  
+  .footer-section h3 {
+    margin-bottom: 1.2rem;
+    text-align: center;
+  }
+  
+  .footer-section h3::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .footer-links {
+    align-items: center;
+  }
+  
+  .footer-links a {
+    justify-content: center;
+  }
+  
+  .social-links {
+    justify-content: center;
+  }
+  
+  .contact-info {
+    align-items: center;
+  }
+  
+  .contact-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .contact-item i {
+    margin-bottom: 0.5rem;
+  }
+  
+  .copyright {
+    margin-top: 2rem;
+  }
+  
+  footer::before {
+    top: -40px;
+    height: 40px;
+  }
+}

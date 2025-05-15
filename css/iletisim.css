@@ -1,0 +1,631 @@
+/* İletişim Sayfası CSS */
+
+/* Footer stillerini ezmediğinden emin olmak için */
+body .iletisim-page footer {
+  background-color: #1B1F3B !important; /* Ana Renk - Lacivert */
+  color: #FFFFFF !important;
+  position: relative !important;
+  padding: 0 !important;
+}
+
+body .iletisim-page footer::before {
+  content: '' !important;
+  position: absolute !important;
+  top: -70px !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 70px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' fill='%231B1F3B' opacity='.25'%3E%3C/path%3E%3Cpath d='M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z' fill='%231B1F3B' opacity='.5'%3E%3C/path%3E%3Cpath d='M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z' fill='%231B1F3B'%3E%3C/path%3E%3C/svg%3E") !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  z-index: 1 !important;
+}
+
+body .iletisim-page .footer-container {
+  position: relative !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 4rem 2rem 2rem !important;
+  display: grid !important;
+  grid-template-columns: 2fr 1fr 1fr !important;
+  gap: 3rem !important;
+  z-index: 2 !important;
+}
+
+body .iletisim-page .footer-section h3 {
+  color: #B39DDB !important;
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 1.5rem !important;
+  position: relative !important;
+  padding-bottom: 0.8rem !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+}
+
+body .iletisim-page .footer-section h3::after {
+  content: '' !important;
+  position: absolute !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  width: 50px !important;
+  height: 2px !important;
+  background: linear-gradient(to right, #6A0DAD, #9370DB) !important;
+  border-radius: 2px !important;
+}
+
+body .iletisim-page .footer-section p {
+  color: #E6E6FA !important;
+  line-height: 1.6 !important;
+  margin-bottom: 1.5rem !important;
+}
+
+body .iletisim-page .footer-section .social-links a {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 50% !important;
+  margin-right: 10px !important;
+  color: #E6E6FA !important;
+  transition: all 0.3s ease !important;
+}
+
+body .iletisim-page .footer-section .social-links a:hover {
+  background-color: #6A0DAD !important;
+  transform: translateY(-3px) !important;
+}
+
+body .iletisim-page .footer-links a {
+  display: block !important;
+  color: #E6E6FA !important;
+  margin-bottom: 12px !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+}
+
+body .iletisim-page .footer-links a i {
+  color: #9370DB !important;
+  margin-right: 8px !important;
+  font-size: 0.8rem !important;
+}
+
+body .iletisim-page .footer-links a:hover {
+  color: #B39DDB !important;
+  transform: translateX(5px) !important;
+}
+
+body .iletisim-page .footer-section .contact-info .contact-item {
+  display: flex !important;
+  margin-bottom: 15px !important;
+}
+
+body .iletisim-page .footer-section .contact-info .contact-item i {
+  color: #9370DB !important;
+  margin-right: 10px !important;
+  margin-top: 3px !important;
+}
+
+body .iletisim-page .footer-section .contact-info .contact-item p {
+  margin-bottom: 5px !important;
+  color: #E6E6FA !important;
+}
+
+.page-header {
+  background: linear-gradient(135deg, #1B1F3B 0%, #4B0082 100%);
+  color: #FFFFFF;
+  text-align: center;
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><rect width="20" height="20" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></svg>');
+  opacity: 0.3;
+  z-index: 1;
+}
+
+.page-header h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.page-header p {
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  color: #E6E6FA; /* Açık Mor */
+}
+
+/* İletişim Bölümü */
+.contact-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 50px;
+}
+
+/* İletişim Bilgileri */
+.contact-container .contact-info {
+  background-color: #FFFFFF;
+  border-radius: 15px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: linear-gradient(180deg, #6A0DAD, #9370DB); /* Mor - Menekşe Gradient */
+  border-radius: 5px 0 0 5px;
+}
+
+.contact-info h2 {
+  font-size: 1.8rem;
+  color: #1B1F3B; /* Ana Renk - Lacivert */
+  margin-bottom: 25px;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.contact-info h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #6A0DAD, #9370DB); /* Mor - Menekşe Gradient */
+  border-radius: 2px;
+}
+
+.contact-details {
+  margin-bottom: 30px;
+}
+
+.contact-container .contact-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  color: #2C3E50; /* Gece Mavisi */
+}
+
+.contact-container .contact-item i {
+  font-size: 1.2rem;
+  color: #6A0DAD; /* Mor */
+  margin-right: 15px;
+  margin-top: 3px;
+}
+
+/* Sosyal Medya */
+.social-media h3 {
+  font-size: 1.4rem;
+  color: #1B1F3B; /* Ana Renk - Lacivert */
+  margin-bottom: 20px;
+}
+
+.contact-container .social-links {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.contact-container .social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, #1B1F3B, #2C3E50); /* Lacivert - Gece Mavisi Gradient */
+  color: #FFFFFF;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.contact-container .social-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #6A0DAD, #9370DB); /* Mor - Menekşe Gradient */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.contact-container .social-link:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(106, 13, 173, 0.2);
+}
+
+.contact-container .social-link:hover::before {
+  opacity: 1;
+}
+
+/* WhatsApp Kart */
+.whatsapp-group {
+  margin-top: 20px;
+}
+
+.whatsapp-card {
+  background-color: #F4F4F4; /* Nötr Gri */
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.whatsapp-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.wa-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  color: #1B1F3B; /* Ana Renk - Lacivert */
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.wa-card-header i {
+  color: #25D366; /* WhatsApp Yeşil */
+  font-size: 1.4rem;
+  margin-right: 10px;
+}
+
+.wa-card-body {
+  color: #666;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.wa-join-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #25D366; /* WhatsApp Yeşil */
+  color: #FFFFFF;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(37, 211, 102, 0.2);
+}
+
+.wa-join-btn i {
+  margin-right: 8px;
+  font-size: 1.1rem;
+}
+
+.wa-join-btn:hover {
+  background-color: #128C7E; /* WhatsApp Koyu Yeşil */
+  box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+  transform: translateY(-2px);
+}
+
+/* İletişim Formu */
+.contact-form {
+  background-color: #FFFFFF;
+  border-radius: 15px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(106, 13, 173, 0.05) 0%, rgba(106, 13, 173, 0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.contact-form::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(106, 13, 173, 0.05) 0%, rgba(106, 13, 173, 0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.contact-form h3 {
+  font-size: 1.8rem;
+  color: #1B1F3B; /* Ana Renk - Lacivert */
+  margin-bottom: 25px;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.contact-form h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #6A0DAD, #9370DB); /* Mor - Menekşe Gradient */
+  border-radius: 2px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #2C3E50; /* Gece Mavisi */
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid rgba(106, 13, 173, 0.2);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #1B1F3B; /* Ana Renk - Lacivert */
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #6A0DAD; /* Mor */
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+  outline: none;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 14px 30px;
+  background: linear-gradient(45deg, #6A0DAD, #9370DB); /* Mor - Menekşe Gradient */
+  color: #FFFFFF;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(106, 13, 173, 0.2);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.cta-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.6s ease;
+  z-index: -1;
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(106, 13, 173, 0.3);
+}
+
+.cta-button:hover::before {
+  left: 100%;
+}
+
+/* Uyarı Mesajları */
+.alert-error, .alert-success {
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.alert-error {
+  background-color: rgba(255, 0, 0, 0.1);
+  border-left: 4px solid #FF0000;
+  color: #D32F2F;
+}
+
+.alert-success {
+  background-color: rgba(76, 175, 80, 0.1);
+  border-left: 4px solid #4CAF50;
+  color: #388E3C;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 992px) {
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .contact-info, .contact-form {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: 60px 0 40px;
+  }
+  
+  .page-header h1 {
+    font-size: 2.2rem;
+  }
+  
+  .page-header p {
+    font-size: 1rem;
+    padding: 0 15px;
+  }
+  
+  .contact-container {
+    padding: 30px 1rem;
+  }
+  
+  .contact-container .contact-info {
+    padding: 25px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .contact-container .contact-info h2 {
+    text-align: center;
+  }
+  
+  .contact-container .contact-info h2::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .contact-container .contact-item {
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  
+  .contact-container .contact-item i {
+    margin-right: 10px;
+  }
+  
+  .social-media h3 {
+    text-align: center;
+  }
+  
+  .contact-container .social-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  
+  .whatsapp-card {
+    margin-top: 20px;
+  }
+  
+  .wa-card-header {
+    justify-content: center;
+  }
+  
+  .wa-card-body {
+    text-align: center;
+  }
+  
+  .wa-join-btn {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    width: 80%;
+  }
+  
+  .contact-container .contact-form {
+    padding: 25px;
+  }
+  
+  .contact-container .contact-form h3 {
+    text-align: center;
+  }
+  
+  .contact-container .contact-form h3::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .form-group label {
+    font-size: 0.95rem;
+  }
+  
+  .form-group input, 
+  .form-group textarea {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+  
+  .cta-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+  }
+}
+
+/* Animasyonlar */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contact-info, .contact-form {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.form-group {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+
+.contact-item {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.contact-item:nth-child(1) { animation-delay: 0.1s; }
+.contact-item:nth-child(2) { animation-delay: 0.2s; }
+.contact-item:nth-child(3) { animation-delay: 0.3s; }

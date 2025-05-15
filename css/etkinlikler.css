@@ -1,0 +1,257 @@
+/* Etkinlikler Sayfası CSS - ASEC Kulübü */
+
+/* Ana Renkler
+- Ana Renk (Lacivert): #1B1F3B
+- Gece Mavisi: #2C3E50
+- Mor: #6A0DAD
+- Koyu Mor: #4B0082
+- Menekşe: #9370DB
+- Sistem Moru: #B39DDB
+- Açık Mor: #E6E6FA
+*/
+
+/* Ana Container */
+.events-container {
+    max-width: 1200px;
+    margin: 3rem auto 5rem;
+    padding: 0 1.5rem;
+}
+
+/* Sayfa Başlığı */
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1B1F3B;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, #6A0DAD, #9370DB);
+    border-radius: 2px;
+}
+
+/* Bölüm Başlığı */
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #2C3E50;
+    margin: 2rem 0 1.5rem;
+    position: relative;
+    padding-left: 1rem;
+}
+
+.section-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 25px;
+    background: linear-gradient(to bottom, #6A0DAD, #9370DB);
+    border-radius: 3px;
+}
+
+/* Etkinlikler Grid */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+/* Etkinlik Kartı */
+.event-card {
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    height: 100%;
+    position: relative;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Yaklaşan Etkinlik */
+.event-card.upcoming {
+    border-left: 5px solid #6A0DAD;
+}
+
+/* Geçmiş Etkinlik */
+.event-card.past {
+    border-left: 5px solid #9370DB;
+    opacity: 0.85;
+}
+
+/* Etkinlik Tarihi */
+.event-date {
+    background: linear-gradient(135deg, #1B1F3B, #4B0082);
+    color: #fff;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    text-align: center;
+}
+
+.event-date .day {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.event-date .month {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+}
+
+/* Etkinlik Detayları */
+.event-details {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-details h4 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1B1F3B;
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
+}
+
+.event-description {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 1.2rem;
+    line-height: 1.6;
+    flex-grow: 1;
+}
+
+/* Etkinlik Bilgileri */
+.event-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.event-info span {
+    display: flex;
+    align-items: center;
+}
+
+.event-info i {
+    color: #9370DB;
+    margin-right: 0.5rem;
+}
+
+/* Butonlar */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    text-align: center;
+    cursor: pointer;
+}
+
+.btn-info {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.btn-info:hover {
+    background-color: #e0e0e0;
+}
+
+.register-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 1.2rem;
+    background-color: #6A0DAD;
+    color: #fff;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.register-btn:hover {
+    background-color: #4B0082;
+    transform: translateY(-2px);
+}
+
+/* Geçmiş Etkinlikler Bölümü */
+.past-events {
+    margin-top: 4rem;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 992px) {
+    .events-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .events-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .event-card {
+        flex-direction: column;
+    }
+    
+    .event-date {
+        width: 100%;
+        flex-direction: row;
+        padding: 0.8rem;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .event-date .day {
+        font-size: 1.5rem;
+    }
+    
+    .event-date .month {
+        font-size: 0.8rem;
+        margin-top: 0;
+    }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Statik Test Raporu</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1, h2 { color: #2c3e50; }
+        ul { margin-bottom: 20px; }
+        .important { color: #c0392b; font-weight: bold; }
+        .ok { color: #27ae60; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Statik Test Raporu</h1>
+    <h2>1. PHP Dosyaları Syntax Kontrolü</h2>
+    <ul>
+        <li class="ok">Tüm önemli PHP dosyalarında syntax kontrolü yapıldı ve <b>hiçbir hata bulunmadı</b>.</li>
+        <li>Kodlar PHP açısından çalışmaya hazır durumda.</li>
+    </ul>
+    <h2>2. Güvenlik ve Kod Standartları Yüzeysel Analizi</h2>
+    <ul>
+        <li>SQL işlemlerinde genellikle <b>PDO ve prepared statements</b> kullanılmış. Bu, SQL injection riskini azaltır ve güvenlik açısından olumlu bir uygulamadır.</li>
+        <li class="important">Bazı dosyalarda <b>mysqli_query</b> kullanımı mevcut. Bu fonksiyonlar kullanılırken parametreler doğrudan SQL'e eklenirse <b>SQL injection riski</b> oluşabilir. <b>Prepared statement</b> kullanılması önerilir.</li>
+        <li>Tehlikeli fonksiyonlar (<code>eval</code>, <code>exec</code>, <code>shell_exec</code>, <code>base64_decode</code>, <code>unserialize</code> vb.) tespit edilmedi.</li>
+    </ul>
+    <h2>3. CSS Dosyaları Statik Analiz</h2>
+    <ul>
+        <li>CSS dosyalarında otomatik stylelint kontrolü yapılamadı (komut uyumsuzluğu). Dilerseniz manuel veya farklı bir araç ile kontrol edebilirsiniz.</li>
+        <li>İstenirse örnek dosyalar manuel incelenebilir.</li>
+    </ul>
+    <h2>4. Kod Okunabilirliği ve Yorum Satırları</h2>
+    <ul>
+        <li>PHP dosyalarında genel olarak işlevsel ve okunabilir kodlar mevcut.</li>
+        <li class="important">Bazı fonksiyonlarda açıklama satırları eksik. Özellikle karmaşık işlemler için açıklama satırları eklenmeli.</li>
+    </ul>
+    <h2>5. Öneriler</h2>
+    <ul>
+        <li class="important"><b>mysqli_query</b> kullanılan yerlerde SQL injection riskine karşı prepared statement kullanılması önerilir.</li>
+        <li>Kritik kod noktalarına açıklama satırları eklenmeli.</li>
+        <li>CSS dosyaları için otomatik analiz aracı (ör. stylelint) ile kod standartları düzenli olarak kontrol edilmeli.</li>
+    </ul>
+    <hr>
+    <p>Hazırlayan: Cascade AI<br>Tarih: 29.04.2025</p>
+</body>
+</html>
