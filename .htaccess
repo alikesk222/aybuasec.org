@@ -1,0 +1,60 @@
+# ASEC Kulübü Güvenlik Ayarları
+# ZAP Raporu doğrultusunda güvenlik önlemleri
+
+# PHP Ayarları
+php_flag session.cookie_httponly on
+php_flag session.cookie_secure on
+php_value session.cookie_samesite "Lax"
+
+# Dizin listelemeyi kapat
+Options -Indexes
+
+# Sunucu bilgilerini gizle
+ServerSignature Off
+Header unset X-Powered-By
+
+# Güvenlik Başlıkları
+<IfModule mod_headers.c>
+    # X-Frame-Options - Clickjacking saldırılarına karşı koruma
+    Header always set X-Frame-Options "SAMEORIGIN"
+    
+    # X-Content-Type-Options - MIME sniffing saldırılarına karşı koruma
+    Header always set X-Content-Type-Options "nosniff"
+    
+    # X-XSS-Protection - XSS saldırılarına karşı ek koruma
+    Header always set X-XSS-Protection "1; mode=block"
+    
+    # Referrer-Policy - Referrer bilgisinin nasıl gönderileceğini kontrol eder
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Strict-Transport-Security (HSTS) - HTTPS kullanımını zorunlu kılar
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    
+    # Content-Security-Policy - XSS ve veri enjeksiyon saldırılarına karşı koruma
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com https://img1.wsimg.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; connect-src 'self'; frame-src 'self' https://www.google.com; object-src 'none';"
+</IfModule>
+
+# CORS Ayarları - Etki alanları arası istekleri kısıtla
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "https://aybuasec.org"
+    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
+
+# Güvenli olmayan HTTP yönlendirmelerini engelle
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# PHP dosyalarının doğrudan erişimini engelle
+<FilesMatch "^(db\.php|validation\.php|security\.php)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Hata sayfalarını özelleştir
+ErrorDocument 403 /403.php
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php

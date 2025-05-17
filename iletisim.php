@@ -2,20 +2,27 @@
 // Veritabanı bağlantısını db.php'den al
 require_once 'db.php';
 
+// CSRF token oluştur - security.php içinde zaten tanımlanmış
+
 // Form gönderildiyse
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $subject = trim($_POST['subject'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-    $ip = $_SERVER['REMOTE_ADDR'] ?? '';
-    
-    if ($name && $email && $subject && $message) {
-        $stmt = $pdo->prepare('INSERT INTO mesajlar (ad, email, konu, mesaj, ip, tarih) VALUES (?, ?, ?, ?, ?, NOW())');
-        $stmt->execute([$name, $email, $subject, $message, $ip]);
-        $success = true;
+    // CSRF token doğrulama
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        $error = 'Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyin.';
     } else {
-        $error = 'Lütfen tüm alanları doldurun.';
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $subject = trim($_POST['subject'] ?? '');
+        $message = trim($_POST['message'] ?? '');
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        
+        if ($name && $email && $subject && $message) {
+            $stmt = $pdo->prepare('INSERT INTO mesajlar (ad, email, konu, mesaj, ip, tarih) VALUES (?, ?, ?, ?, ?, NOW())');
+            $stmt->execute([$name, $email, $subject, $message, $ip]);
+            $success = true;
+        } else {
+            $error = 'Lütfen tüm alanları doldurun.';
+        }
     }
 }
 ?>
@@ -72,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php if (!empty($success)) { echo '<div class="alert-success">Mesajınız başarıyla gönderildi!</div>'; } ?>
                 <?php if (!empty($error)) { echo '<div class="alert-error">'.$error.'</div>'; } ?>
                 <form action="" method="post">
+                    <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                     <div class="form-group">
                         <label for="name">Adınız:</label>
                         <input type="text" id="name" name="name" required>

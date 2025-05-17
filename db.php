@@ -1,6 +1,14 @@
 <?php
 // db.php – PDO ile veritabanı bağlantı dosyası
 
+// Oturum başlat
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Güvenlik başlıklarını ekle
+require_once __DIR__ . '/includes/security.php';
+
 $serverName = $_SERVER['SERVER_NAME'] ?? '';
 $isLocal = ($serverName === 'localhost' || $serverName === '127.0.0.1');
 

@@ -1,9 +1,8 @@
 <?php
 require_once 'db.php';
 require_once 'includes/validation.php';
-session_start();
 
-// CSRF token oluştur
+// CSRF token oluştur - security.php içinde session_start() zaten çağrılıyor
 $csrf_token = generateCSRFToken();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
