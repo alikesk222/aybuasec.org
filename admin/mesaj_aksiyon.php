@@ -1,6 +1,12 @@
 <?php
 // mesaj_aksiyon.php: okundu, sil, yıldız işlemleri için
-require_once '../db.php'; // Güvenli veritabanı bağlantısı için db.php'yi dahil et
+
+// Güvenlik tanımlaması
+define('ASEC_SECURITY', true);
+define('ASEC_LOADED', true);
+
+// Oturum başlat
+session_start();
 
 // Oturum kontrolü
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
@@ -16,12 +22,16 @@ if(!isset($_POST['csrf_token']) || !\ASEC\Security\SecurityHelper::validateCSRFT
 // Veritabanı bağlantısı için global $conn değişkenini kullan
 global $conn;
 
-// PDO bağlantısına çevir
+// PDO bağlantısı oluştur
 try {
+    // Veritabanı bilgilerini güvenli bir şekilde al
+    $db_config = require_once __DIR__ . '/../includes/db_config.php';
+    
+    // PDO bağlantısı oluştur
     $pdo = new PDO(
-        'mysql:host=' . $conn->host_info . ';dbname=' . mysqli_get_server_info($conn) . ';charset=utf8mb4',
-        $conn->user,
-        '', // Şifre boş bırakılıyor, çünkü zaten bağlantı kurulmuş durumda
+        "mysql:host={$db_config['host']};dbname={$db_config['dbname']};charset=utf8mb4",
+        $db_config['username'],
+        $db_config['password'],
         [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -29,7 +39,9 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    die('Veritabanı bağlantı hatası: ' . htmlspecialchars($e->getMessage()));
+    // Hata mesajını güvenli bir şekilde göster
+    error_log('Veritabanı bağlantı hatası: ' . $e->getMessage());
+    die('Veritabanı bağlantısı kurulamadı. Lütfen daha sonra tekrar deneyin.');
 }
 
 // Kullanıcı girdilerini güvenli bir şekilde al ve doğrula
