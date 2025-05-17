@@ -7,12 +7,16 @@
 // Hata raporlamayı kapat
 error_reporting(0);
 
-// URL parametrelerini al
-$image_path = $_SERVER['QUERY_STRING'];
-$optimize = isset($_GET['optimize']) ? $_GET['optimize'] : false;
-$width = isset($_GET['width']) ? intval($_GET['width']) : null;
-$height = isset($_GET['height']) ? intval($_GET['height']) : null;
-$quality = isset($_GET['quality']) ? intval($_GET['quality']) : 80;
+// URL parametrelerini güvenli bir şekilde al
+// Görsel yolunu doğrudan kullanıcı girdisinden almak yerine güvenli bir yöntem kullan
+$image_id = isset($_GET['id']) ? filter_var($_GET['id'], FILTER_VALIDATE_INT) : 0;
+$optimize = isset($_GET['optimize']) ? filter_var($_GET['optimize'], FILTER_SANITIZE_STRING) : false;
+$width = isset($_GET['width']) ? filter_var($_GET['width'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 2000]]) : null;
+$height = isset($_GET['height']) ? filter_var($_GET['height'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 2000]]) : null;
+$quality = isset($_GET['quality']) ? filter_var($_GET['quality'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100]]) : 80;
+
+// Görsel ID'sinden güvenli bir şekilde dosya yolunu al
+$image_path = getImagePathFromId($image_id);
 
 // Optimize parametresi yoksa veya false ise, doğrudan orijinal görseli göster
 if (!$optimize || $optimize !== 'true') {
@@ -20,13 +24,52 @@ if (!$optimize || $optimize !== 'true') {
     exit;
 }
 
-// Görsel yolunu temizle
-$image_path = explode('?', $image_path)[0];
+// Görsel ID'sinden güvenli bir şekilde dosya yolunu alan fonksiyon
+function getImagePathFromId($image_id) {
+    // Güvenlik kontrolü
+    if ($image_id <= 0) {
+        header("HTTP/1.0 400 Bad Request");
+        exit("Geçersiz görsel ID'si");
+    }
+    
+    // Veritabanı bağlantısı (güvenli bir şekilde yapılmalı)
+    try {
+        require_once __DIR__ . '/../db.php';
+        global $conn;
+        
+        // Güvenli SQL sorgusu
+        $stmt = $conn->prepare("SELECT image_path FROM images WHERE id = ?");
+        $stmt->bind_param("i", $image_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($row = $result->fetch_assoc()) {
+            $image_path = __DIR__ . '/../uploads/' . basename($row['image_path']);
+            
+            // Path traversal saldırılarına karşı koruma
+            $real_uploads_dir = realpath(__DIR__ . '/../uploads/');
+            $real_image_path = realpath($image_path);
+            
+            if ($real_image_path === false || strpos($real_image_path, $real_uploads_dir) !== 0) {
+                header("HTTP/1.0 403 Forbidden");
+                exit("Geçersiz görsel yolu");
+            }
+            
+            return $real_image_path;
+        } else {
+            header("HTTP/1.0 404 Not Found");
+            exit("Görsel bulunamadı");
+        }
+    } catch (Exception $e) {
+        header("HTTP/1.0 500 Internal Server Error");
+        exit("Sunucu hatası");
+    }
+}
 
 // Görsel var mı kontrol et
 if (!file_exists($image_path)) {
     header("HTTP/1.0 404 Not Found");
-    exit("Görsel bulunamadı: $image_path");
+    exit("Görsel bulunamadı");
 }
 
 // Görsel türünü belirle

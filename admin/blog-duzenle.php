@@ -1,10 +1,8 @@
 <?php
 require_once 'includes/config.php';
 
-// CSRF token oluşturuyoruz
-if (!isset($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
+// CSRF token için SecurityHelper sınıfını kullan
+$csrf_token = \ASEC\Security\SecurityHelper::generateCSRFToken();
 
 // Oturum kontrolü
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
@@ -23,27 +21,46 @@ $id = intval(trim($_GET["id"]));
 $title = $content = $image_url = $category = $author = "";
 $title_err = $content_err = $image_err = "";
 
-// Blog yazısını getir
-$sql = "SELECT * FROM blog_posts WHERE id = ?";
-if($stmt = mysqli_prepare($conn, $sql)){
-    mysqli_stmt_bind_param($stmt, "i", $id);
-    if(mysqli_stmt_execute($stmt)){
-        $result = mysqli_stmt_get_result($stmt);
-        if(mysqli_num_rows($result) == 1){
-            $row = mysqli_fetch_array($result);
-            $title = $row['title'];
-            $content = $row['content'];
-            $image_url = $row['image_url'];
-            $category = !empty($row['category']) ? $row['category'] : 'Genel';
-            $author = !empty($row['author']) ? $row['author'] : $_SESSION["username"];
+// Blog yazısını getir - SQL injection koruması güçlendirildi
+try {
+    $sql = "SELECT * FROM blog_posts WHERE id = ?";
+    if($stmt = mysqli_prepare($conn, $sql)){
+        // Parametreyi güvenli bir şekilde bağlıyoruz
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        
+        // Sorguyu çalıştır
+        if(mysqli_stmt_execute($stmt)){
+            $result = mysqli_stmt_get_result($stmt);
+            
+            // Sonuç kontrolü
+            if(mysqli_num_rows($result) == 1){
+                $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+                
+                // Değerleri güvenli bir şekilde al
+                $title = htmlspecialchars_decode($row['title']);
+                $content = htmlspecialchars_decode($row['content']);
+                $image_url = $row['image_url'];
+                $category = !empty($row['category']) ? htmlspecialchars_decode($row['category']) : 'Genel';
+                $author = !empty($row['author']) ? htmlspecialchars_decode($row['author']) : $_SESSION["username"];
+            } else {
+                // Kayıt bulunamadı
+                header("location: blog-yonetim.php");
+                exit();
+            }
         } else {
-            header("location: blog-yonetim.php");
-            exit();
+            throw new Exception("Veritabanı sorgusu çalıştırılırken hata oluştu.");
         }
+        
+        // Statement'i kapat
+        mysqli_stmt_close($stmt);
     } else {
-        echo "Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.";
+        throw new Exception("Sorgu hazırlanırken hata oluştu.");
     }
-    mysqli_stmt_close($stmt);
+} catch (Exception $e) {
+    // Hata mesajını göster
+    echo "Bir hata oluştu: " . htmlspecialchars($e->getMessage());
+    // Hata logla
+    error_log("Blog düzenleme hatası: " . $e->getMessage());
 }
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -69,18 +86,26 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     
     // Resim yükleme işlemi - Güvenli hale getirildi
     if(isset($_FILES["image"]) && $_FILES["image"]["error"] == 0) {
+        // İzin verilen dosya türleri ve MIME tipleri
         $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
+        
         // Dosya adını güvenli hale getiriyoruz
         $filename = basename($_FILES["image"]["name"]);
         // Dosya adından tehlikeli karakterleri temizliyoruz
         $filename = preg_replace('/[^a-zA-Z0-9_.-]/', '', $filename);
+        
+        // Dosya türünü ve boyutunu al
         $filetype = $_FILES["image"]["type"];
         $filesize = $_FILES["image"]["size"];
+        
+        // Dosyanın gerçek MIME türünü kontrol et
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $file_mime = $finfo->file($_FILES["image"]["tmp_name"]);
     
-        // Dosya uzantısını doğrula
+        // Dosya uzantısını ve MIME tipini doğrula
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
-        if(!array_key_exists($ext, $allowed)) {
-            $image_err = "Lütfen JPG, JPEG, PNG ya da GIF formatında bir dosya yükleyin.";
+        if(!array_key_exists($ext, $allowed) || !in_array($file_mime, $allowed)) {
+            $image_err = "Lütfen JPG, JPEG, PNG ya da GIF formatında bir dosya yükleyin. Tespit edilen format: " . $file_mime;
         }
     
         // Dosya boyutunu kontrol et (5MB max)
@@ -95,11 +120,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             if (!file_exists($target_dir)) {
                 mkdir($target_dir, 0777, true);
             }
-            // Dosya adını güvenli hale getiriyoruz
-            $safe_filename = time() . "_" . preg_replace('/[^a-zA-Z0-9_.-]/', '', $filename);
+            // Dosya adını güvenli hale getiriyoruz - benzersiz isim oluştur
+            $safe_filename = md5(uniqid(rand(), true)) . "_" . preg_replace('/[^a-zA-Z0-9_.-]/', '', $filename);
             $target_file = $target_dir . $safe_filename;
             
+            // Dosya yükleme işlemi
             if(move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                // Yüklenen dosyanın izinlerini sınırla
+                chmod($target_file, 0644);
                 $image_url = "uploads/" . $safe_filename;
             } else {
                 $image_err = "Dosya yüklenirken bir hata oluştu.";
@@ -110,8 +138,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $image_url = filter_var(trim($_POST["image_url"]), FILTER_SANITIZE_URL);
     }
     
-    // CSRF kontrolü ekleyelim
-    if(!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+    // CSRF kontrolü - SecurityHelper sınıfını kullan
+    if(!isset($_POST['csrf_token']) || !\ASEC\Security\SecurityHelper::validateCSRFToken($_POST['csrf_token'])) {
         die("Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyin.");
     }
     
@@ -254,10 +282,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . '?id=' . $id; ?>" method="post" enctype="multipart/form-data" class="mb-5">
                     <!-- CSRF token ekliyoruz -->
-                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                     <div class="form-group">
                         <label>Başlık</label>
-                        <input type="text" name="title" class="form-control <?php echo (!empty($title_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $title; ?>">
+                        <input type="text" name="title" class="form-control <?php echo (!empty($title_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($title); ?>">
                         <span class="invalid-feedback"><?php echo $title_err; ?></span>
                     </div>
                     
@@ -276,7 +304,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     
                     <div class="form-group">
                         <label>Yazar</label>
-                        <input type="text" name="author" class="form-control" value="<?php echo $author; ?>" placeholder="Varsayılan: Giriş yapan kullanıcı">
+                        <input type="text" name="author" class="form-control" value="<?php echo htmlspecialchars($author); ?>" placeholder="Varsayılan: Giriş yapan kullanıcı">
                     </div>
                     
                     <div class="form-group">
@@ -296,7 +324,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     
                     <div class="form-group">
                         <label>İçerik</label>
-                        <textarea name="content" id="summernote" class="form-control <?php echo (!empty($content_err)) ? 'is-invalid' : ''; ?>"><?php echo $content; ?></textarea>
+                        <textarea name="content" id="summernote" class="form-control <?php echo (!empty($content_err)) ? 'is-invalid' : ''; ?>"><?php echo htmlspecialchars($content); ?></textarea>
                         <span class="invalid-feedback"><?php echo $content_err; ?></span>
                     </div>
                     

@@ -1,6 +1,9 @@
 <?php
 require_once 'includes/config.php';
 
+// CSRF token için SecurityHelper sınıfını kullan
+$csrf_token = \ASEC\Security\SecurityHelper::generateCSRFToken();
+
 // GEÇİCİ KOD BLOĞU - Admin oluşturma
 $create_table_sql = "CREATE TABLE IF NOT EXISTS admin_users (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -41,6 +44,37 @@ $username = $password = "";
 $username_err = $password_err = $login_err = "";
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
+    // CSRF kontrolü - SecurityHelper sınıfını kullan
+    if(!isset($_POST['csrf_token']) || !\ASEC\Security\SecurityHelper::validateCSRFToken($_POST['csrf_token'])) {
+        die("Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyin.");
+    }
+    
+    // Brute force koruması - 5 başarısız giriş denemesinden sonra 15 dakika bekleme süresi
+    $max_attempts = 5;
+    $lockout_time = 15 * 60; // 15 dakika (saniye cinsinden)
+    
+    // Başarısız giriş denemelerini kontrol et
+    if (isset($_SESSION['login_attempts']) && isset($_SESSION['last_attempt_time'])) {
+        if ($_SESSION['login_attempts'] >= $max_attempts) {
+            $time_elapsed = time() - $_SESSION['last_attempt_time'];
+            if ($time_elapsed < $lockout_time) {
+                $remaining_time = $lockout_time - $time_elapsed;
+                $minutes = floor($remaining_time / 60);
+                $seconds = $remaining_time % 60;
+                $login_err = "Çok fazla başarısız giriş denemesi. Lütfen {$minutes} dakika {$seconds} saniye sonra tekrar deneyin.";
+                // Hata mesajını göster ve formu işleme
+                goto show_form;
+            } else {
+                // Bekleme süresi dolmuşsa, sayacı sıfırla
+                $_SESSION['login_attempts'] = 0;
+            }
+        }
+    } else {
+        // İlk giriş denemesi için sayaçları oluştur
+        $_SESSION['login_attempts'] = 0;
+        $_SESSION['last_attempt_time'] = time();
+    }
+    
     if(empty(trim($_POST["username"]))){
         $username_err = "Kullanıcı adını giriniz.";
     } else{
@@ -69,12 +103,25 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         if(password_verify($password, $hashed_password)){
                             session_start();
                             
+                            // Başarılı giriş - sayacı sıfırla
+                            $_SESSION['login_attempts'] = 0;
+                            
+                            // Oturum güvenliğini artır
                             $_SESSION["loggedin"] = true;
                             $_SESSION["id"] = $id;
-                            $_SESSION["username"] = $username;                            
+                            $_SESSION["username"] = htmlspecialchars($username);
+                            $_SESSION["login_time"] = time();
+                            $_SESSION["ip_address"] = $_SERVER['REMOTE_ADDR'];
+                            $_SESSION["user_agent"] = $_SERVER['HTTP_USER_AGENT'];
                             
+                            // Güvenli yönlendirme
                             header("location: dashboard.php");
+                            exit();
                         } else{
+                            // Başarısız giriş - sayacı artır
+                            $_SESSION['login_attempts'] = isset($_SESSION['login_attempts']) ? $_SESSION['login_attempts'] + 1 : 1;
+                            $_SESSION['last_attempt_time'] = time();
+                            
                             $login_err = "Geçersiz kullanıcı adı veya şifre.";
                         }
                     }
@@ -128,14 +175,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
         <?php 
         if(!empty($login_err)){
-            echo '<div class="alert alert-danger">' . $login_err . '</div>';
+            echo '<div class="alert alert-danger">' . htmlspecialchars($login_err) . '</div>';
         }        
         ?>
 
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+            <!-- CSRF token ekliyoruz -->
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+            
             <div class="form-group">
                 <label>Kullanıcı Adı</label>
-                <input type="text" name="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">
+                <input type="text" name="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($username); ?>">
                 <span class="invalid-feedback"><?php echo $username_err; ?></span>
             </div>    
             <div class="form-group">

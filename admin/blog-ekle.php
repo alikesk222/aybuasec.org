@@ -1,6 +1,9 @@
 <?php
 require_once 'includes/config.php';
 
+// CSRF token için SecurityHelper sınıfını kullan
+$csrf_token = \ASEC\Security\SecurityHelper::generateCSRFToken();
+
 // Oturum kontrolü
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: login.php");
@@ -11,6 +14,11 @@ $title = $content = $image_url = $category = $author = "";
 $title_err = $content_err = $image_err = "";
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
+    // CSRF kontrolü - SecurityHelper sınıfını kullan
+    if(!isset($_POST['csrf_token']) || !\ASEC\Security\SecurityHelper::validateCSRFToken($_POST['csrf_token'])) {
+        die("Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyin.");
+    }
+    
     // Başlık kontrolü
     if(empty(trim($_POST["title"]))){
         $title_err = "Lütfen başlık giriniz.";
@@ -34,22 +42,54 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Resim URL kontrolü (opsiyonel)
     $image_url = !empty($_POST["image_url"]) ? trim($_POST["image_url"]) : "";
     
-    // Görsel yükleme işlemi
+    // Görsel yükleme işlemi - Güvenli hale getirildi
     if (isset($_FILES["image_file"]) && $_FILES["image_file"]["error"] == 0) {
-        $target_dir = "uploads/";
-        $target_file = $target_dir . basename($_FILES["image_file"]["name"]);
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-        // Sadece belirli dosya türlerine izin ver
-        $allowed_types = ["jpg", "jpeg", "png", "gif"];
-        if (in_array($imageFileType, $allowed_types)) {
-            if (move_uploaded_file($_FILES["image_file"]["tmp_name"], $target_file)) {
-                $image_url = $target_file; // Veritabanına kaydedilecek dosya yolu
+        // İzin verilen dosya türleri ve MIME tipleri
+        $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
+        
+        // Dosya adını güvenli hale getiriyoruz
+        $filename = basename($_FILES["image_file"]["name"]);
+        // Dosya adından tehlikeli karakterleri temizliyoruz
+        $filename = preg_replace('/[^a-zA-Z0-9_.-]/', '', $filename);
+        
+        // Dosya türünü ve boyutunu al
+        $filetype = $_FILES["image_file"]["type"];
+        $filesize = $_FILES["image_file"]["size"];
+        
+        // Dosyanın gerçek MIME türünü kontrol et
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $file_mime = $finfo->file($_FILES["image_file"]["tmp_name"]);
+    
+        // Dosya uzantısını ve MIME tipini doğrula
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        if(!array_key_exists($ext, $allowed) || !in_array($file_mime, $allowed)) {
+            $image_err = "Lütfen JPG, JPEG, PNG ya da GIF formatında bir dosya yükleyin. Tespit edilen format: " . $file_mime;
+        }
+    
+        // Dosya boyutunu kontrol et (5MB max)
+        $maxsize = 5 * 1024 * 1024;
+        if($filesize > $maxsize) {
+            $image_err = "Dosya boyutu çok büyük. Maksimum 5MB olmalıdır.";
+        }
+    
+        // Tüm kontroller tamamsa dosyayı yükle
+        if(empty($image_err)) {
+            $target_dir = "uploads/";
+            if (!file_exists($target_dir)) {
+                mkdir($target_dir, 0777, true);
+            }
+            // Dosya adını güvenli hale getiriyoruz - benzersiz isim oluştur
+            $safe_filename = md5(uniqid(rand(), true)) . "_" . preg_replace('/[^a-zA-Z0-9_.-]/', '', $filename);
+            $target_file = $target_dir . $safe_filename;
+            
+            // Dosya yükleme işlemi
+            if(move_uploaded_file($_FILES["image_file"]["tmp_name"], $target_file)) {
+                // Yüklenen dosyanın izinlerini sınırla
+                chmod($target_file, 0644);
+                $image_url = $target_dir . $safe_filename;
             } else {
                 $image_err = "Dosya yüklenirken bir hata oluştu.";
             }
-        } else {
-            $image_err = "Sadece JPG, JPEG, PNG ve GIF dosyalarına izin verilmektedir.";
         }
     }
     
@@ -190,9 +230,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 </div>
 
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
+                    <!-- CSRF token ekliyoruz -->
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                    
                     <div class="form-group">
                         <label>Başlık</label>
-                        <input type="text" name="title" class="form-control <?php echo (!empty($title_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $title; ?>">
+                        <input type="text" name="title" class="form-control <?php echo (!empty($title_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($title); ?>">
                         <span class="invalid-feedback"><?php echo $title_err; ?></span>
                     </div>
                     
@@ -211,12 +254,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     
                     <div class="form-group">
                         <label>Yazar</label>
-                        <input type="text" name="author" class="form-control" value="<?php echo $author; ?>" placeholder="Varsayılan: Giriş yapan kullanıcı">
+                        <input type="text" name="author" class="form-control" value="<?php echo htmlspecialchars($author); ?>" placeholder="Varsayılan: Giriş yapan kullanıcı">
                     </div>
                     
                     <div class="form-group">
                         <label>Görsel URL (Opsiyonel)</label>
-                        <input type="text" name="image_url" class="form-control" value="<?php echo $image_url; ?>">
+                        <input type="text" name="image_url" class="form-control" value="<?php echo htmlspecialchars($image_url); ?>">
                     </div>
                     
                     <div class="form-group">
@@ -226,7 +269,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     
                     <div class="form-group">
                         <label>İçerik</label>
-                        <textarea name="content" id="summernote" class="form-control <?php echo (!empty($content_err)) ? 'is-invalid' : ''; ?>"><?php echo $content; ?></textarea>
+                        <textarea name="content" id="summernote" class="form-control <?php echo (!empty($content_err)) ? 'is-invalid' : ''; ?>"><?php echo htmlspecialchars($content); ?></textarea>
                         <span class="invalid-feedback"><?php echo $content_err; ?></span>
                     </div>
                     

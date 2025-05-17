@@ -159,8 +159,14 @@ function validateCaptcha($captcha_response) {
     }
     
     // Google reCAPTCHA için
-    // Gerçek uygulamada buraya site anahtarınızı ekleyin
-    $secret_key = '6LeLMC8rAAAAAEC71_0RltkwV76-qpK-UslyfmX1';
+    // Anahtarı güvenli bir şekilde sakla (env dosyasından veya veritabanından al)
+    $secret_key = getSecretKeyFromConfig();
+    
+    // Anahtar yoksa doğrulama başarısız
+    if (empty($secret_key)) {
+        error_log('reCAPTCHA anahtarı bulunamadı');
+        return false;
+    }
     
     $url = 'https://www.google.com/recaptcha/api/siteverify';
     $data = [
@@ -169,18 +175,49 @@ function validateCaptcha($captcha_response) {
         'remoteip' => $_SERVER['REMOTE_ADDR']
     ];
     
-    $options = [
-        'http' => [
-            'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-            'method' => 'POST',
-            'content' => http_build_query($data)
-        ]
-    ];
+    // cURL kullan (daha güvenli)
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     
-    $context = stream_context_create($options);
-    $result = file_get_contents($url, false, $context);
+    $result = curl_exec($ch);
+    $error = curl_error($ch);
+    curl_close($ch);
+    
+    if ($error) {
+        error_log('reCAPTCHA doğrulama hatası: ' . $error);
+        return false;
+    }
+    
     $result_json = json_decode($result, true);
+    return isset($result_json['success']) && $result_json['success'] === true;
+}
+
+// Güvenli bir şekilde reCAPTCHA anahtarını al
+function getSecretKeyFromConfig() {
+    // Anahtarı .env dosyasından veya güvenli bir kaynaktan al
+    // Örnek: .env dosyası kullanımı
+    $env_file = __DIR__ . '/../.env';
+    if (file_exists($env_file)) {
+        $env_content = file_get_contents($env_file);
+        preg_match('/RECAPTCHA_SECRET_KEY=([^\n]+)/', $env_content, $matches);
+        if (isset($matches[1])) {
+            return trim($matches[1]);
+        }
+    }
     
-    return $result_json['success'];
+    // Veritabanından alma örneği (alternatif yöntem)
+    // global $conn;
+    // $stmt = $conn->prepare("SELECT value FROM config WHERE name = 'recaptcha_secret_key'");
+    // $stmt->execute();
+    // $result = $stmt->get_result();
+    // if ($row = $result->fetch_assoc()) {
+    //     return $row['value'];
+    // }
+    
+    return null; // Anahtar bulunamadı
 }
 ?>

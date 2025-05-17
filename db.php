@@ -13,10 +13,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Güvenlik sınıfını ekle - namespace kullanarak
-use \ASEC\Security\SecurityHelper;
-
-// Security.php dosyasını dahil et - modern yaklaşım
+// Güvenlik sınıfını tanımla - modern yaklaşım
 (function() {
     // Güvenlik sınıfını doğrudan burada tanımla
     namespace ASEC\Security;
@@ -92,7 +89,7 @@ use \ASEC\Security\SecurityHelper;
 })();
 
 // Güvenlik başlıklarını uygula
-SecurityHelper::setSecurityHeaders();
+\ASEC\Security\SecurityHelper::setSecurityHeaders();
 
 $serverName = $_SERVER['SERVER_NAME'] ?? '';
 $isLocal = ($serverName === 'localhost' || $serverName === '127.0.0.1');
