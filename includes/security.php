@@ -61,4 +61,3 @@ function validateCSRFToken($token) {
 // Güvenlik başlıklarını otomatik olarak uygulamayı kaldırıyoruz
 // Bunun yerine db.php'de namespace kullanarak çağıracağız
 // setSecurityHeaders();
-?>
