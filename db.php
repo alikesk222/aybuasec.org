@@ -6,8 +6,16 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Güvenlik başlıklarını ekle
+// Güvenlik başlıklarını ekle - namespace kullanarak
+use function \ASEC\Security\setSecurityHeaders;
+use function \ASEC\Security\generateCSRFToken;
+use function \ASEC\Security\validateCSRFToken;
+
+// Security.php dosyasını dahil et
 require_once __DIR__ . '/includes/security.php';
+
+// Güvenlik başlıklarını uygula
+setSecurityHeaders();
 
 $serverName = $_SERVER['SERVER_NAME'] ?? '';
 $isLocal = ($serverName === 'localhost' || $serverName === '127.0.0.1');

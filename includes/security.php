@@ -4,6 +4,8 @@
  * Bu dosya, güvenlik başlıklarını ve ayarlarını içerir.
  */
 
+namespace ASEC\Security;
+
 // Güvenlik başlıklarını ayarla
 function setSecurityHeaders() {
     // Content Security Policy (CSP) - XSS ve veri enjeksiyon saldırılarına karşı koruma
@@ -56,6 +58,7 @@ function validateCSRFToken($token) {
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
 }
 
-// Güvenlik başlıklarını uygula
-setSecurityHeaders();
+// Güvenlik başlıklarını otomatik olarak uygulamayı kaldırıyoruz
+// Bunun yerine db.php'de namespace kullanarak çağıracağız
+// setSecurityHeaders();
 ?>
