@@ -1,19 +1,25 @@
 <?php
 require_once 'includes/config.php';
 
+// CSRF token oluşturuyoruz
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 // Oturum kontrolü
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: login.php");
     exit;
 }
 
-// ID kontrolü
-if(!isset($_GET["id"]) || empty(trim($_GET["id"]))){
+// ID kontrolü - Güvenli hale getirildi
+if(!isset($_GET["id"]) || !is_numeric($_GET["id"]) || empty(trim($_GET["id"]))){
     header("location: blog-yonetim.php");
     exit;
 }
 
-$id = trim($_GET["id"]);
+// ID'yi güvenli bir şekilde alıyoruz
+$id = intval(trim($_GET["id"]));
 $title = $content = $image_url = $category = $author = "";
 $title_err = $content_err = $image_err = "";
 
@@ -61,10 +67,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $content = trim($_POST["content"]);
     }
     
-    // Resim yükleme işlemi
+    // Resim yükleme işlemi - Güvenli hale getirildi
     if(isset($_FILES["image"]) && $_FILES["image"]["error"] == 0) {
         $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "gif" => "image/gif", "png" => "image/png");
-        $filename = $_FILES["image"]["name"];
+        // Dosya adını güvenli hale getiriyoruz
+        $filename = basename($_FILES["image"]["name"]);
+        // Dosya adından tehlikeli karakterleri temizliyoruz
+        $filename = preg_replace('/[^a-zA-Z0-9_.-]/', '', $filename);
         $filetype = $_FILES["image"]["type"];
         $filesize = $_FILES["image"]["size"];
     
@@ -86,16 +95,24 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             if (!file_exists($target_dir)) {
                 mkdir($target_dir, 0777, true);
             }
-            $target_file = $target_dir . time() . "_" . basename($filename);
+            // Dosya adını güvenli hale getiriyoruz
+            $safe_filename = time() . "_" . preg_replace('/[^a-zA-Z0-9_.-]/', '', $filename);
+            $target_file = $target_dir . $safe_filename;
             
             if(move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-                $image_url = "uploads/" . time() . "_" . basename($filename);
+                $image_url = "uploads/" . $safe_filename;
             } else {
                 $image_err = "Dosya yüklenirken bir hata oluştu.";
             }
         }
     } elseif(!empty($_POST["image_url"])) {
-        $image_url = trim($_POST["image_url"]);
+        // URL'yi güvenli hale getiriyoruz
+        $image_url = filter_var(trim($_POST["image_url"]), FILTER_SANITIZE_URL);
+    }
+    
+    // CSRF kontrolü ekleyelim
+    if(!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+        die("Güvenlik doğrulaması başarısız oldu. Lütfen sayfayı yenileyip tekrar deneyin.");
     }
     
     // Hata yoksa güncelle
@@ -103,6 +120,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $sql = "UPDATE blog_posts SET title=?, category=?, author=?, content=?, image_url=? WHERE id=?";
         
         if($stmt = mysqli_prepare($conn, $sql)){
+            // Parametreleri güvenli bir şekilde bağlıyoruz
             mysqli_stmt_bind_param($stmt, "sssssi", $title, $category, $author, $content, $image_url, $id);
             
             if(mysqli_stmt_execute($stmt)){
@@ -234,7 +252,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     <h1 class="h2">Blog Yazısını Düzenle</h1>
                 </div>
 
-                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>?id=<?php echo $id; ?>" method="post" class="blog-form" enctype="multipart/form-data">
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . '?id=' . $id; ?>" method="post" enctype="multipart/form-data" class="mb-5">
+                    <!-- CSRF token ekliyoruz -->
+                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <div class="form-group">
                         <label>Başlık</label>
                         <input type="text" name="title" class="form-control <?php echo (!empty($title_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $title; ?>">
