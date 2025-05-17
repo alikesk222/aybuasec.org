@@ -13,17 +13,24 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Güvenlik başlıklarını ekle - namespace kullanarak
-use function \ASEC\Security\setSecurityHeaders;
-use function \ASEC\Security\generateCSRFToken;
-use function \ASEC\Security\validateCSRFToken;
+// Güvenlik sınıfını ekle - namespace kullanarak
+use \ASEC\Security\SecurityHelper;
 
 // Security.php dosyasını dahil et - modern yaklaşım
 (function() {
     $securityFile = __DIR__ . '/includes/security.php';
     if (file_exists($securityFile)) {
-        // include_once yerine require_once kullanıyoruz - namespace import mekanizması zaten use ile sağlandı
-        require_once $securityFile;
+        // Dosyayı dahil etmek için sadece auto-loading mekanizmasını kullanalım
+        // Bu yaklaşım, namespace kullanımı için en uygun yöntemdir
+        spl_autoload_register(function($class) use ($securityFile) {
+            // Sadece ASEC\Security namespace'indeki sınıfları yükle
+            if (strpos($class, 'ASEC\\Security') === 0) {
+                include_once $securityFile;
+            }
+        });
+        
+        // Fonksiyonları hemen kullanabilmek için sınıfı manuel olarak yükleyelim
+        class_exists('\ASEC\Security\SecurityHelper');
     } else {
         // Özel istisna sınıfını kullan
         throw new SecurityFileNotFoundException('Güvenlik dosyası bulunamadı: ' . $securityFile);
@@ -31,7 +38,7 @@ use function \ASEC\Security\validateCSRFToken;
 })();
 
 // Güvenlik başlıklarını uygula
-setSecurityHeaders();
+SecurityHelper::setSecurityHeaders();
 
 $serverName = $_SERVER['SERVER_NAME'] ?? '';
 $isLocal = ($serverName === 'localhost' || $serverName === '127.0.0.1');

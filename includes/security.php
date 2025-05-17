@@ -6,8 +6,16 @@
 
 namespace ASEC\Security;
 
-// Güvenlik başlıklarını ayarla
-function setSecurityHeaders() {
+/**
+ * SecurityHelper sınıfı
+ * Tüm güvenlik fonksiyonlarını içeren yardımcı sınıf
+ */
+class SecurityHelper
+{
+    /**
+     * Güvenlik başlıklarını ayarla
+     */
+    public static function setSecurityHeaders() {
     // Content Security Policy (CSP) - XSS ve veri enjeksiyon saldırılarına karşı koruma
     $csp = "default-src 'self'; " .
            "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.google.com https://www.gstatic.com https://img1.wsimg.com; " .
@@ -46,18 +54,27 @@ function setSecurityHeaders() {
     header("Access-Control-Allow-Headers: Content-Type, Authorization");
 }
 
-// CSRF token oluşturma ve doğrulama fonksiyonları
-function generateCSRFToken() {
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    /**
+     * CSRF token oluştur
+     * @return string
+     */
+    public static function generateCSRFToken() {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
     }
-    return $_SESSION['csrf_token'];
-}
 
-function validateCSRFToken($token) {
-    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+    /**
+     * CSRF token doğrula
+     * @param string $token
+     * @return bool
+     */
+    public static function validateCSRFToken($token) {
+        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+    }
+
 }
 
 // Güvenlik başlıklarını otomatik olarak uygulamayı kaldırıyoruz
 // Bunun yerine db.php'de namespace kullanarak çağıracağız
-// setSecurityHeaders();
