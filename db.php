@@ -1,6 +1,13 @@
 <?php
 // db.php – PDO ile veritabanı bağlantı dosyası
 
+// Özel istisna sınıfı tanımla
+class SecurityFileNotFoundException extends \Exception {
+    public function __construct($message = "Güvenlik dosyası bulunamadı", $code = 0, \Throwable $previous = null) {
+        parent::__construct($message, $code, $previous);
+    }
+}
+
 // Oturum başlat
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -15,9 +22,11 @@ use function \ASEC\Security\validateCSRFToken;
 (function() {
     $securityFile = __DIR__ . '/includes/security.php';
     if (file_exists($securityFile)) {
-        include_once $securityFile;
+        // include_once yerine require_once kullanıyoruz - namespace import mekanizması zaten use ile sağlandı
+        require_once $securityFile;
     } else {
-        throw new \Exception('Güvenlik dosyası bulunamadı: ' . $securityFile);
+        // Özel istisna sınıfını kullan
+        throw new SecurityFileNotFoundException('Güvenlik dosyası bulunamadı: ' . $securityFile);
     }
 })();
 
