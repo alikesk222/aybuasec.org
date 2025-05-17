@@ -11,8 +11,15 @@ use function \ASEC\Security\setSecurityHeaders;
 use function \ASEC\Security\generateCSRFToken;
 use function \ASEC\Security\validateCSRFToken;
 
-// Security.php dosyasını dahil et
-require_once __DIR__ . '/includes/security.php';
+// Security.php dosyasını dahil et - modern yaklaşım
+(function() {
+    $securityFile = __DIR__ . '/includes/security.php';
+    if (file_exists($securityFile)) {
+        include_once $securityFile;
+    } else {
+        throw new \Exception('Güvenlik dosyası bulunamadı: ' . $securityFile);
+    }
+})();
 
 // Güvenlik başlıklarını uygula
 setSecurityHeaders();
